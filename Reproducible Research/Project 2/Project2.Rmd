@@ -1,0 +1,88 @@
+---
+title: "Severe Weather Events Analysis"
+author: "TWW"
+date: "2024-05-03"
+output: html_document
+---
+
+## Synopsis
+
+This analysis explores the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database to determine which types of severe weather events are most harmful to population health and have the greatest economic consequences. The analysis focuses on the fatalities, injuries, property damage, and crop damage caused by various weather events across the United States.
+
+## Data Processing
+
+```{r data_processing, cache=TRUE}
+# Load required libraries
+library(dplyr)
+library(ggplot2)
+
+# Download and read the data file
+if (!file.exists("stormdata.csv.bz2")) {
+  download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", "stormdata.csv.bz2")
+}
+stormdata <- read.csv("stormdata.csv.bz2")
+
+# Convert event type to lowercase for consistency
+stormdata$EVTYPE <- tolower(stormdata$EVTYPE)
+
+# Summarize fatalities, injuries, property damage, and crop damage by event type
+event_summary <- stormdata %>%
+  group_by(EVTYPE) %>%
+  summarize(
+    total_fatalities = sum(FATALITIES),
+    total_injuries = sum(INJURIES),
+    total_propdmg = sum(PROPDMG),
+    total_cropdmg = sum(CROPDMG)
+  )
+
+# Sort event types by total fatalities and injuries
+event_summary_health <- event_summary %>%
+  arrange(desc(total_fatalities + total_injuries))
+
+# Sort event types by total property and crop damage
+event_summary_economic <- event_summary %>%
+  arrange(desc(total_propdmg + total_cropdmg))
+
+###Results
+###Population Health Impact
+
+# Top 10 event types causing fatalities and injuries
+top_events_health <- head(event_summary_health, 10)
+
+# Create a bar plot for population health impact
+ggplot(top_events_health, aes(x = reorder(EVTYPE, total_fatalities + total_injuries), y = total_fatalities + total_injuries)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Severe Weather Events Impacting Population Health",
+    x = "Event Type",
+    y = "Total Fatalities and Injuries"
+  ) +
+  theme_minimal()
+
+#The bar plot shows the top 10 severe weather events that have the highest impact on population health, based on the total number of fatalities and injuries. The event types are ordered from the most harmful to the least harmful.
+###Economic Consequences
+
+# Top 10 event types causing property and crop damage
+top_events_economic <- head(event_summary_economic, 10)
+
+# Create a bar plot for economic consequences
+ggplot(top_events_economic, aes(x = reorder(EVTYPE, total_propdmg + total_cropdmg), y = total_propdmg + total_cropdmg)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Severe Weather Events with Greatest Economic Consequences",
+    x = "Event Type",
+    y = "Total Property and Crop Damage"
+  ) +
+  theme_minimal()
+
+#The bar plot shows the top 10 severe weather events that have the greatest economic consequences, based on the total property and crop damage. The event types are ordered from the most damaging to the least damaging.
+
+###Conclusion
+#Based on the analysis, we can conclude that:
+
+#Tornado, thunderstorm wind, and flood events have the highest impact on population health, causing the most fatalities and injuries.
+#Flood, hurricane/typhoon, and storm surge events have the greatest economic consequences, resulting in the highest property and crop damage.
+
+#These findings highlight the importance of prioritizing resources and preparedness efforts for these specific types of severe weather events to mitigate their impact on public health and the economy.
