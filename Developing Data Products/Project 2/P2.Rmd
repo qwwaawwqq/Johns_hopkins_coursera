@@ -1,0 +1,29 @@
+---
+title: "P2"
+author: "TWW"
+date: "2024-05-04"
+output: html_document
+---
+
+```{r}
+# Set chunk options
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+# Load required libraries
+library(plotly)
+library(htmltools)
+
+# Load the mtcars dataset
+data(mtcars)
+
+# Create the interactive plot using Plotly
+plot <- plot_ly(mtcars, x = ~hp, y = ~mpg, text = ~paste("Car Model:", rownames(mtcars)), 
+                mode = "markers", color = ~factor(cyl), size = ~wt, sizes = c(10, 50),
+                marker = list(symbol = "circle", sizemode = "diameter", opacity = 0.7),
+                hoverinfo = "text") %>%
+  layout(title = "Horsepower vs. Miles per Gallon",
+         xaxis = list(title = "Horsepower"),
+         yaxis = list(title = "Miles per Gallon"),
+         legend = list(title = list(text = "Cylinders")))
+
+# Display the plot
+plot
