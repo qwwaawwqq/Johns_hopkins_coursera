@@ -1,0 +1,64 @@
+---
+title: "Predicting Exercise Quality from Accelerometer Data"
+author: "Your Name"
+date: "Date"
+output: html_document
+---
+
+## Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit, it is now possible to collect a large amount of data about personal activity relatively inexpensively. In this project, the goal is to use data from accelerometers on the belt, forearm, arm, and dumbbell of 6 participants to predict the manner in which they did the exercise. The participants were asked to perform barbell lifts correctly and incorrectly in 5 different ways.
+
+## Data Loading and Preprocessing
+
+```{r data_loading, message=FALSE}
+# Load required libraries
+library(caret)
+library(randomForest)
+
+# Load the training data
+training_data <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
+
+# Load the testing data
+testing_data <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")
+
+# Clean the data
+training_data[training_data == '#DIV/0!'] <- NA
+training_data[training_data == ''] <- NA
+testing_data[testing_data == '#DIV/0!'] <- NA
+testing_data[testing_data == ''] <- NA
+
+# Remove columns with several NAs and the first column
+training_data_clean <- training_data[c(2,8:11,37:49,113:124,140,151:159,160)]
+testing_data_clean <- testing_data[c(2,8:11,37:49,113:124,140,151:159,160)]
+
+# Split the training data into training and validation sets
+# Split the cleaned training data into training and validation sets
+set.seed(123)
+train_index <- createDataPartition(training_data_clean$classe, p = 0.7, list = FALSE)
+train_data <- training_data_clean[train_index, ]
+validation_data <- training_data_clean[-train_index, ]
+
+#Chaging the response variable "classe" from character to factor, for better functioning of random forest function. 
+set.seed(125)
+train_data$classe <- as.factor(train_data$classe)
+validation_data$classe <- as.factor(validation_data$classe)
+#testing_data$classe <- as.factor(testing_data_clean$classe)
+
+# Train a random forest model
+rf_model <- train(classe ~ ., data = train_data, method = "rf")
+
+# Make predictions on the validation set
+predictions <- predict(rf_model, newdata = validation_data)
+
+# Calculate the confusion matrix
+confusion_matrix <- confusionMatrix(predictions, validation_data$classe)
+print(confusion_matrix)
+
+# Calculate the expected out-of-sample error
+out_of_sample_error <- 1 - confusion_matrix$overall["Accuracy"]
+print(paste0("Expected out-of-sample error: ", round(out_of_sample_error, 4)))
+
+# Make predictions on the test set
+test_predictions <- predict(rf_model, newdata = testing_data)
+print(test_predictions)
