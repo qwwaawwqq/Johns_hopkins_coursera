@@ -1,0 +1,28 @@
+---
+title: "Project1_2"
+author: "TWW"
+date: "2024-05-04"
+output:
+  html_document: default
+  pdf_document: default
+---
+```{r}
+#Tooth Growth Analysis
+#Data Summary
+#Let's load the ToothGrowth data and perform some basic exploratory data analysis:
+
+data(ToothGrowth)
+summary(ToothGrowth)
+
+#Confidence Intervals and Hypothesis Tests
+#We can use confidence intervals and hypothesis tests to compare tooth growth by supplement type (supp) and dose:
+
+#Compare tooth growth by supplement type
+t.test(len ~ supp, data = ToothGrowth)
+
+#Compare tooth growth by dose
+anova(lm(len ~ dose, data = ToothGrowth))
+
+#Conclusions and Assumptions
+#Based on the results of the confidence intervals and hypothesis tests, we can draw conclusions about the differences in tooth growth by supplement type and dose. It's important to state any assumptions made, such as the independence of observations, normality of the data, and equal variances between groups.
+
