@@ -1,0 +1,82 @@
+---
+title: "BMI Calculator"
+author: "TWW"
+output: ioslides_presentation
+---
+
+## Introduction
+
+-   The BMI (Body Mass Index) Calculator is a Shiny application that allows users to calculate their BMI based on height, weight, gender, and age.
+-   It provides information about the BMI category and associated health risks.
+
+## How to Use
+
+1.  Enter your height in centimeters.
+2.  Enter your weight in kilograms.
+3.  Select your gender.
+4.  Enter your age.
+5.  Click the "Calculate BMI" button.
+6.  The application will display your calculated BMI, BMI category, and associated health risks.
+
+## BMI Formula
+
+-The BMI is calculated using the following formula:
+
+```{r, echo=TRUE}
+bmi <- function(weight, height) {
+  weight / (height / 100)^2
+}
+
+```
+
+```{r}
+#The BMI categories are defined as follows:
+getBmiCategory <- function(bmi) {
+  if (bmi < 18.5) {
+    return("Underweight")
+  } else if (bmi >= 18.5 && bmi < 25) {
+    return("Normal weight")
+  } else if (bmi >= 25 && bmi < 30) {
+    return("Overweight")
+  } else {
+    return("Obese")
+  }
+}
+```
+
+## Health Risk
+
+The health risks associated with each BMI category are:
+
+```{r}
+getHealthRisks <- function(bmi) {
+  if (bmi < 18.5) {
+    return("Increased risk of nutritional deficiencies and osteoporosis.")
+  } else if (bmi >= 18.5 && bmi < 25) {
+    return("Lowest risk of chronic diseases.")
+  } else if (bmi >= 25 && bmi < 30) {
+    return("Increased risk of type 2 diabetes, hypertension, and cardiovascular diseases.")
+  } else {
+    return("High risk of type 2 diabetes, hypertension, cardiovascular diseases, and certain cancers.")
+  }
+}
+```
+
+## Example Calculation
+
+Let's calculate the BMI and associated information for a person with the following characteristics:
+
+```{r}
+height <- 175
+weight <- 75
+gender <- "Male"
+age <- 35
+
+bmi_result <- bmi(weight, height)
+bmi_category <- getBmiCategory(bmi_result)
+health_risks <- getHealthRisks(bmi_result)
+
+cat("BMI:", round(bmi_result, 2), "\n")
+cat("BMI Category:", bmi_category, "\n")
+cat("Health Risks:", health_risks)
+```
