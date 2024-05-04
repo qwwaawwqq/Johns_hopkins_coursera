@@ -1,0 +1,83 @@
+---
+title: "Project1"
+author: "TWW"
+date: "2024-05-04"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Exponential Distribution and Central Limit Theorem
+
+## Overview
+In this project, we will investigate the exponential distribution in R and compare it with the Central Limit Theorem. We will simulate the distribution of averages of 40 exponentials and examine its properties.
+
+## Simulations
+We will use the `rexp()` function in R to simulate the exponential distribution. The mean and standard deviation of the exponential distribution are both equal to 1/lambda, where lambda is the rate parameter. We set lambda = 0.2 for all simulations.
+
+To simulate the distribution of averages of 40 exponentials, we will perform 1000 simulations:
+
+```{r}
+set.seed(42)
+lambda <- 0.2
+n <- 40
+num_sims <- 1000
+
+sim_means <- replicate(num_sims, mean(rexp(n, lambda)))
+
+#Sample Mean versus Theoretical Mean
+#The theoretical mean of the exponential distribution is 1/lambda. Let's compare the sample mean from our simulations to the theoretical mean:
+
+theoretical_mean <- 1/lambda
+sample_mean <- mean(sim_means)
+
+paste("Theoretical Mean:", theoretical_mean)
+paste("Sample Mean:", sample_mean)
+
+#We can visualize the distribution of sample means using a histogram:
+
+hist(sim_means, main = "Distribution of Sample Means", xlab = "Sample Mean")
+abline(v = theoretical_mean, col = "red", lwd = 2)
+
+#The red vertical line represents the theoretical mean.
+#Sample Variance versus Theoretical Variance
+#The theoretical variance of the exponential distribution is (1/lambda)^2. Let's compare the sample variance from our simulations to the theoretical variance:
+
+theoretical_var <- (1/lambda)^2
+sample_var <- var(sim_means)
+
+paste("Theoretical Variance:", theoretical_var)
+paste("Sample Variance:", sample_var)
+
+#Distribution
+#To check if the distribution of sample means is approximately normal, we can create a histogram and a Q-Q plot:
+
+hist(sim_means, main = "Distribution of Sample Means", xlab = "Sample Mean", prob = TRUE)
+lines(density(sim_means), col = "blue", lwd = 2)
+
+qqnorm(sim_means)
+qqline(sim_means)
+
+#If the distribution is approximately normal, the histogram should resemble a bell curve, and the Q-Q plot should show the points falling close to the straight line.
+
+#Tooth Growth Analysis
+#Data Summary
+#Let's load the ToothGrowth data and perform some basic exploratory data analysis:
+
+data(ToothGrowth)
+summary(ToothGrowth)
+
+#Confidence Intervals and Hypothesis Tests
+#We can use confidence intervals and hypothesis tests to compare tooth growth by supplement type (supp) and dose:
+
+# Compare tooth growth by supplement type
+t.test(len ~ supp, data = ToothGrowth)
+
+# Compare tooth growth by dose
+anova(lm(len ~ dose, data = ToothGrowth))
+
+#Conclusions and Assumptions
+#Based on the results of the confidence intervals and hypothesis tests, we can draw conclusions about the differences in tooth growth by supplement type and dose. It's important to state any assumptions made, such as the independence of observations, normality of the data, and equal variances between groups.
+
+
+
