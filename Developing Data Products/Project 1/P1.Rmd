@@ -1,0 +1,46 @@
+---
+title: "P1"
+author: "TWW"
+date: "2024-05-04"
+output: html_document
+---
+
+```{r}
+# Set chunk options
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+# Load required libraries
+library(leaflet)
+library(htmltools)
+library(dplyr)
+
+# Create a data frame with location information
+locations <- data.frame(
+  name = c("Tokyo", "New York", "Paris", "Sydney"),
+  lat = c(35.6895, 40.7128, 48.8566, -33.8688),
+  lng = c(139.6917, -74.0060, 2.3522, 151.2093),
+  description = c(
+    "Tokyo is the capital and largest city of Japan.",
+    "New York City is the most populous city in the United States.",
+    "Paris is the capital and most populous city of France.",
+    "Sydney is the largest city in Australia."
+  )
+)
+
+
+# Create the Leaflet map
+locations %>%
+  leaflet() %>%
+  addTiles() %>%
+  addMarkers(
+    lng = ~lng,
+    lat = ~lat,
+    popup = ~paste0("<b>", name, "</b><br>", description),
+    label = ~name,
+    labelOptions = labelOptions(noHide = TRUE, direction = "top")
+  ) %>%
+  addProviderTiles("Stamen.Toner") %>%
+  setView(lng = 0, lat = 20, zoom = 2)
+
+# Display the current date
+paste("Document created on:", Sys.Date())
